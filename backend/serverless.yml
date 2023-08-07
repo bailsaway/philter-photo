@@ -24,6 +24,10 @@ provider:
   name: aws
   runtime: nodejs18.x
   profile: PhilterPhotoServerless
+  environment:
+    ACADEMY_WHITE_BUCKET: academy-white-caterham-motorsport-photos-bucket
+    ACADEMY_GREEN_BUCKET: academy-green-caterham-motorsport-photos-bucket
+    ROADSPORT_BUCKET: roadsport-caterham-motorsport-photos-bucket
 
   # you can overwrite defaults here
   #  stage: dev
@@ -38,6 +42,8 @@ provider:
           Resource:
             - arn:aws:dynamodb:eu-west-2:603758851381:table/CompetitorInfoTable
             - arn:aws:s3:::roadsport-caterham-motorsport-photos-bucket
+            - arn:aws:s3:::academy-white-caterham-motorsport-photos-bucket
+            - arn:aws:s3:::academy-green-caterham-motorsport-photos-bucket
 
 # you can define service wide environment variables here
 #  environment:
@@ -51,12 +57,13 @@ provider:
 #    - include-me.js
 #    - include-me-dir/**
 
-plugins:
-  - serverless-s3-sync
+# plugins:
+#   - serverless-s3-sync
 
-custom:
-  s3Sync:
-    - bucketName: roadsport-caterham-motorsport-photos-bucket
+# custom:
+#   s3Sync:
+#     - bucketName: roadsport-caterham-motorsport-photos-bucket
+#       localDir: forUpload
 
 functions:
   addCompetitor:
@@ -83,6 +90,12 @@ functions:
       - httpApi:
           path: /competitor/{id}
           method: put
+  uploadRoadsport:
+    handler: src/uploadRoadsport.handler
+    events:
+      - httpApi:
+          path: /uploadroadsport
+          method: post
           #users/create
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
@@ -135,6 +148,14 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: roadsport-caterham-motorsport-photos-bucket
+    AcademyWhiteBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: academy-white-caterham-motorsport-photos-bucket
+    AcademyGreenBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: academy-green-caterham-motorsport-photos-bucket
 #    NewResource:
 #      Type: AWS::S3::Bucket
 #      Properties:
