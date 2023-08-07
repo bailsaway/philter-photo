@@ -1,13 +1,26 @@
 "use strict";
-const { v4 } = require("uuid");
-const aws = require("aws-sdk");
+const AWS = require("aws-sdk");
+//use node.js built in crypto module as AWS doesn't like uuid
+const { randomUUID } = require("crypto");
 
 const addCompetitor = async (event) => {
-	const dynamodb = AWS.dynamodb.DocumentClient();
-	const { competitor } = JSON.parse(event.body);
-	const id = v4;
+	const dynamodb = new AWS.DynamoDB.DocumentClient();
+	const {
+		championship,
+		raceNumber,
+		firstName,
+		surname,
+		primaryColour,
+		frontPlate1,
+		frontPlate2,
+		rearPlate1,
+		rearPlate2,
+		nonChampionshipBrandingText,
+		dropboxUrl,
+	} = JSON.parse(event.body);
+	const id = randomUUID();
 
-	console.log("this is an ID:", id);
+	console.log("DB ID", id);
 
 	const newCompetitor = {
 		id,
@@ -24,22 +37,19 @@ const addCompetitor = async (event) => {
 		dropboxUrl,
 	};
 
-	await dynamodb.put({
-		TableName: "CompetitorInfoTable",
-		Item: newCompetitor,
-	});
+	await dynamodb
+		.put({
+			TableName: "CompetitorInfoTable",
+			Item: newCompetitor,
+		})
+		.promise();
 
 	return {
 		statusCode: 200,
-		body: JSON.stringify(
-			{
-				message: "Go Serverless v1.0! Your function executed successfully!",
-				competitorAdded: newCompetitor,
-				input: event,
-			},
-			null,
-			2
-		),
+		body: JSON.stringify({
+			message: "New competitor successfully added",
+			competitorAdded: newCompetitor,
+		}),
 	};
 };
 
