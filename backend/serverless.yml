@@ -28,32 +28,16 @@ provider:
   # you can overwrite defaults here
   #  stage: dev
   region: eu-west-2
-  # you can add statements to the Lambda function's IAM Role here
   iam:
     role:
       statements:
         - Effect: "Allow"
           Action:
             - dynamodb:*
-          #           - "s3:ListBucket"
+            - s3:*
           Resource:
             - arn:aws:dynamodb:eu-west-2:603758851381:table/CompetitorInfoTable
-            # {
-            #   "Fn::Join":
-            #     [
-            #       "",
-            #       ["arn:aws:s3:::", { "Ref": "ServerlessDeploymentBucket" }],
-            #     ],
-            # }
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:PutObject"
-#          Resource:
-#            Fn::Join:
-#              - ""
-#              - - "arn:aws:s3:::"
-#                - "Ref" : "ServerlessDeploymentBucket"
-#                - "/*"
+            - arn:aws:s3:::roadsport-caterham-motorsport-photos-bucket
 
 # you can define service wide environment variables here
 #  environment:
@@ -66,6 +50,13 @@ provider:
 #    - '!exclude-me-dir/**'
 #    - include-me.js
 #    - include-me-dir/**
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+    - bucketName: roadsport-caterham-motorsport-photos-bucket
 
 functions:
   addCompetitor:
@@ -140,6 +131,10 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+    RoadsportChampionshipBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: roadsport-caterham-motorsport-photos-bucket
 #    NewResource:
 #      Type: AWS::S3::Bucket
 #      Properties:
