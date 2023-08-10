@@ -6,8 +6,8 @@ const s3Client = new AWS.S3();
 
 async function saveFile(file) {
 	console.log({ file });
-	const bucket = process.env.ROADSPORT_BUCKET;
-	console.log(bucket);
+	const bucket = process.env.COMPETITOR_CSV_BUCKET;
+	console.log({ bucket });
 	const savedFile = await s3Client
 		.putObject({
 			Bucket: bucket,
@@ -18,23 +18,19 @@ async function saveFile(file) {
 	return savedFile;
 }
 
-const uploadRoadsport = async (event) => {
+const uploadCSV = async (event) => {
 	const { files } = await parser.parse(event);
-	try {
-		files.forEach(saveFile);
-	} catch (error) {
-		console.log(error);
-	}
+	files.forEach(saveFile);
 
 	return {
 		statusCode: 200,
 		body: JSON.stringify({
-			message: "Photos uploaded",
-			input: await parser.parse(event),
+			message: "CSV uploaded",
+			contentsUploaded: files[0],
 		}),
 	};
 };
 
 module.exports = {
-	handler: uploadRoadsport,
+	handler: uploadCSV,
 };

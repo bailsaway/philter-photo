@@ -28,35 +28,26 @@ provider:
     ACADEMY_WHITE_BUCKET: academy-white-caterham-motorsport-photos-bucket
     ACADEMY_GREEN_BUCKET: academy-green-caterham-motorsport-photos-bucket
     ROADSPORT_BUCKET: roadsport-caterham-motorsport-photos-bucket
+    COMPETITOR_CSV_BUCKET: caterham-competitor-csv-upload-bucket
 
-  # you can overwrite defaults here
   #  stage: dev
   region: eu-west-2
   iam:
     role:
       statements:
-        - Effect: "Allow"
+        - Effect: Allow
           Action:
-            - dynamodb:*
-            - s3:*
+            - "dynamodb:*"
           Resource:
             - arn:aws:dynamodb:eu-west-2:603758851381:table/CompetitorInfoTable
+        - Effect: Allow
+          Action:
+            - "s3:*"
+          Resource:
             - arn:aws:s3:::roadsport-caterham-motorsport-photos-bucket
             - arn:aws:s3:::academy-white-caterham-motorsport-photos-bucket
             - arn:aws:s3:::academy-green-caterham-motorsport-photos-bucket
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  patterns:
-#    - '!exclude-me.js'
-#    - '!exclude-me-dir/**'
-#    - include-me.js
-#    - include-me-dir/**
-
+            - arn:aws:s3:::caterham-competitor-csv-upload-bucket
 # plugins:
 #   - serverless-s3-sync
 
@@ -90,45 +81,12 @@ functions:
       - httpApi:
           path: /competitor/{id}
           method: put
-  uploadRoadsport:
-    handler: src/uploadRoadsport.handler
+  uploadCSV:
+    handler: src/uploadCSV.handler
     events:
       - httpApi:
-          path: /uploadroadsport
+          path: /csv
           method: post
-          #users/create
-#      - websocket: $connect
-#      - s3: ${env:BUCKET}
-#      - schedule: rate(10 minutes)
-#      - sns: greeter-topic
-#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
-#      - alexaSkill: amzn1.ask.skill.xx-xx-xx-xx
-#      - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
-#      - iot:
-#          sql: "SELECT * FROM 'some_topic'"
-#      - cloudwatchEvent:
-#          event:
-#            source:
-#              - "aws.ec2"
-#            detail-type:
-#              - "EC2 Instance State-change Notification"
-#            detail:
-#              state:
-#                - pending
-#      - cloudwatchLog: '/aws/lambda/hello'
-#      - cognitoUserPool:
-#          pool: MyUserPool
-#          trigger: PreSignUp
-#      - alb:
-#          listenerArn: arn:aws:elasticloadbalancing:us-east-1:XXXXXX:listener/app/my-load-balancer/50dc6c495c0c9188/
-#          priority: 1
-#          conditions:
-#            host: example.com
-#            path: /hello
-
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
 
 # you can add CloudFormation resource templates here
 resources:
@@ -156,11 +114,7 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: academy-green-caterham-motorsport-photos-bucket
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+    CompetitorCSVUploadBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: caterham-competitor-csv-upload-bucket
