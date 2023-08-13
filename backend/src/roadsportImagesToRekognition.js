@@ -23,7 +23,7 @@ async function saveFile(file) {
 	}
 }
 
-const uploadCSV = async (event) => {
+const roadsportImagesToRekognition = async (event) => {
 	try {
 		const { files } = await parser.parse(event);
 		const savePromises = files.map(saveFile);
@@ -35,12 +35,12 @@ const uploadCSV = async (event) => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				message: "CSV uploaded",
+				message: "image uploaded",
 				contentsUploaded: files[0],
 			}),
 		};
 	} catch (error) {
-		console.error("Error uploading CSV:", error);
+		console.error("Error uploading image:", error);
 
 		return {
 			statusCode: 500,
@@ -48,12 +48,12 @@ const uploadCSV = async (event) => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				message: "Error uploading CSV",
+				message: "Error uploading image",
 			}),
 		};
 	}
 };
 
 module.exports = {
-	handler: uploadCSV,
+	handler: roadsportImagesToRekognition,
 };
