@@ -46,6 +46,10 @@ provider:
             - "arn:aws:s3:::academy-white-caterham-motorsport-photos-bucket/*"
             - "arn:aws:s3:::academy-green-caterham-motorsport-photos-bucket/*"
             - "arn:aws:s3:::caterham-competitor-csv-upload-bucket/*"
+        - Effect: Allow
+          Action:
+            - "rekognition:*"
+          Resource: "*"
 # plugins:
 #   - serverless-s3-sync
 
@@ -94,6 +98,12 @@ functions:
           rules:
             - suffix: .csv
           existing: true
+  roadsportImagesToRekognition:
+    handler: src/roadsportImagesToRekognition.handler
+    events:
+      - httpApi:
+          path: /roadpsort
+          method: post
 
 # you can add CloudFormation resource templates here
 resources:
@@ -140,3 +150,18 @@ resources:
               Action:
                 - s3:GetObject
               Resource: "arn:aws:s3:::caterham-competitor-csv-upload-bucket/*"
+    RoadsportBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      DependsOn: RoadsportChampionshipBucket
+      Properties:
+        Bucket:
+          Ref: RoadsportChampionshipBucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource: "arn:aws:s3:::roadsport-caterham-motorsport-photos-bucket/*"

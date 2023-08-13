@@ -7,7 +7,6 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
 const addData = async (params) => {
-	console.log("addData function ran");
 	try {
 		await dynamodb.put(params).promise();
 		console.log("Added item:", JSON.stringify(params.Item, null, 2));
