@@ -1,16 +1,3 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: backend
 # app and org for use with dashboard.serverless.com
 # app: philterphoto
@@ -102,7 +89,7 @@ functions:
     handler: src/roadsportImagesToRekognition.handler
     events:
       - httpApi:
-          path: /roadpsort
+          path: /roadsport
           method: post
 
 # you can add CloudFormation resource templates here
@@ -150,18 +137,3 @@ resources:
               Action:
                 - s3:GetObject
               Resource: "arn:aws:s3:::caterham-competitor-csv-upload-bucket/*"
-    RoadsportBucketPolicy:
-      Type: AWS::S3::BucketPolicy
-      DependsOn: RoadsportChampionshipBucket
-      Properties:
-        Bucket:
-          Ref: RoadsportChampionshipBucket
-        PolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            - Sid: PublicReadGetObject
-              Effect: Allow
-              Principal: "*"
-              Action:
-                - s3:GetObject
-              Resource: "arn:aws:s3:::roadsport-caterham-motorsport-photos-bucket/*"

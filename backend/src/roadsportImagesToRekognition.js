@@ -3,11 +3,12 @@ const AWS = require("aws-sdk");
 const parser = require("lambda-multipart-parser");
 
 const s3Client = new AWS.S3();
+const rekognition = new AWS.Rekognition();
 
 async function saveFile(file) {
 	try {
 		console.log({ file });
-		const bucket = process.env.COMPETITOR_CSV_BUCKET;
+		const bucket = process.env.ROADSPORT_BUCKET;
 		console.log({ bucket });
 		const savedFile = await s3Client
 			.putObject({
@@ -16,10 +17,17 @@ async function saveFile(file) {
 				Body: file.content,
 			})
 			.promise();
-		return savedFile;
+		const imageText = await rekognition
+			.detectText({
+				Image: {
+					Bytes: file.content,
+				},
+			})
+			.promise();
+		return { savedFile, imageText };
 	} catch (error) {
 		console.error("Error saving file:", error);
-		throw error; // Rethrow the error to be caught in the caller
+		throw error;
 	}
 }
 
@@ -27,17 +35,14 @@ const roadsportImagesToRekognition = async (event) => {
 	try {
 		const { files } = await parser.parse(event);
 		const savePromises = files.map(saveFile);
-		await Promise.all(savePromises);
+		const results = await Promise.all(savePromises);
 
 		return {
 			statusCode: 200,
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({
-				message: "image uploaded",
-				contentsUploaded: files[0],
-			}),
+			body: JSON.stringify(results),
 		};
 	} catch (error) {
 		console.error("Error uploading image:", error);
@@ -48,7 +53,7 @@ const roadsportImagesToRekognition = async (event) => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				message: "Error uploading image",
+				message: error,
 			}),
 		};
 	}
