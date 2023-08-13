@@ -32,6 +32,9 @@ const getACompetitor = async (event) => {
 
 	return {
 		statusCode: 200,
+		headers: {
+			"Content-Type": "application/json",
+		},
 		body: JSON.stringify({
 			message: "Specific competitor returned",
 			competitor,

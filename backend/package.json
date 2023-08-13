@@ -11,6 +11,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"aws-sdk": "^2.1430.0",
+		"csvtojson": "^2.0.10",
 		"lambda-multipart-parser": "^1.0.1",
 		"serverless-s3-sync": "^3.1.0"
 	}

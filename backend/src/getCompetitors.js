@@ -15,23 +15,11 @@ const getCompetitors = async (event) => {
 		console.log(error);
 	}
 
-	// const newCompetitor = {
-	// 	id,
-	// 	championship,
-	// 	raceNumber,
-	// 	firstName,
-	// 	surname,
-	// 	primaryColour,
-	// 	frontPlate1,
-	// 	frontPlate2,
-	// 	rearPlate1,
-	// 	rearPlate2,
-	// 	nonChampionshipBrandingText,
-	// 	dropboxUrl,
-	// };
-
 	return {
 		statusCode: 200,
+		headers: {
+			"Content-Type": "application/json",
+		},
 		body: JSON.stringify({
 			message: "All competitors returned",
 			allCompetitors: competitors,

@@ -29,8 +29,6 @@ provider:
     ACADEMY_GREEN_BUCKET: academy-green-caterham-motorsport-photos-bucket
     ROADSPORT_BUCKET: roadsport-caterham-motorsport-photos-bucket
     COMPETITOR_CSV_BUCKET: caterham-competitor-csv-upload-bucket
-
-  #  stage: dev
   region: eu-west-2
   iam:
     role:
@@ -44,10 +42,10 @@ provider:
           Action:
             - "s3:*"
           Resource:
-            - arn:aws:s3:::roadsport-caterham-motorsport-photos-bucket
-            - arn:aws:s3:::academy-white-caterham-motorsport-photos-bucket
-            - arn:aws:s3:::academy-green-caterham-motorsport-photos-bucket
-            - arn:aws:s3:::caterham-competitor-csv-upload-bucket
+            - "arn:aws:s3:::roadsport-caterham-motorsport-photos-bucket/*"
+            - "arn:aws:s3:::academy-white-caterham-motorsport-photos-bucket/*"
+            - "arn:aws:s3:::academy-green-caterham-motorsport-photos-bucket/*"
+            - "arn:aws:s3:::caterham-competitor-csv-upload-bucket/*"
 # plugins:
 #   - serverless-s3-sync
 
@@ -87,6 +85,15 @@ functions:
       - httpApi:
           path: /csv
           method: post
+  csvToDynamodb:
+    handler: src/csvToDynamodb.handler
+    events:
+      - s3:
+          bucket: caterham-competitor-csv-upload-bucket
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .csv
+          existing: true
 
 # you can add CloudFormation resource templates here
 resources:
@@ -118,3 +125,18 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: caterham-competitor-csv-upload-bucket
+    BucketPolicyOne:
+      Type: AWS::S3::BucketPolicy
+      DependsOn: CompetitorCSVUploadBucket
+      Properties:
+        Bucket:
+          Ref: CompetitorCSVUploadBucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource: "arn:aws:s3:::caterham-competitor-csv-upload-bucket/*"
