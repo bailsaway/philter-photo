@@ -1,31 +1,25 @@
 "use strict";
 const AWS = require("aws-sdk");
 const csv = require("csvtojson");
+const { randomUUID } = require("crypto");
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
 const addData = async (params) => {
-	console.log("Adding a new item based on: ");
-	await dynamodb
-		.put(params, function (err, data) {
-			if (err) {
-				console.error(
-					"Unable to add item. Error JSON: ",
-					JSON.stringify(err, null, 2)
-				);
-			} else {
-				console.log("Added item: ", JSON.stringify(params.Item, null, 2));
-			}
-		})
-		.promise();
+	console.log("addData function ran");
+	try {
+		await dynamodb.put(params).promise();
+		console.log("Added item:", JSON.stringify(params.Item, null, 2));
+	} catch (error) {
+		console.error("Unable to add item. Error:", JSON.stringify(error, null, 2));
+	}
 };
 
 const csvToDynamodb = async (event) => {
 	const s3Event = event.Records[0].s3;
 	const bucket = s3Event.bucket.name;
 	const key = s3Event.object.key;
-	console.log(`Bucket = ${bucket}; key = ${key}`);
 
 	//grab csv file from S3 bucket
 	const s3Stream = s3
@@ -35,16 +29,19 @@ const csvToDynamodb = async (event) => {
 		})
 		.createReadStream();
 
-	csv()
+	await csv()
 		.fromStream(s3Stream)
 		.on("data", (row) => {
 			//read each row
 			let jsonContent = JSON.parse(row);
-			console.log(JSON.stringify(jsonContent));
-			//push each row into DynamoDB
+			let id = jsonContent.id !== "" ? jsonContent.id : randomUUID();
+			console.log("Each Row parsed", JSON.stringify(jsonContent));
+
+			//each row into DynamoDB
 			let paramsToPush = {
 				TableName: "CompetitorInfoTable",
 				Item: {
+					id: id,
 					championship: jsonContent.championship,
 					raceNumber: jsonContent.raceNumber,
 					firstName: jsonContent.firstName,
@@ -58,17 +55,9 @@ const csvToDynamodb = async (event) => {
 					dropboxUrl: jsonContent.dropboxUrl,
 				},
 			};
+			console.log("ParamsToPush: ", JSON.stringify(paramsToPush));
 			addData(paramsToPush);
 		});
-	return {
-		statusCode: 200,
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			message: "Table updated",
-		}),
-	};
 };
 
 module.exports = {

@@ -31,6 +31,9 @@ const uploadCSV = async (event) => {
 
 		return {
 			statusCode: 200,
+			headers: {
+				"Content-Type": "application/json",
+			},
 			body: JSON.stringify({
 				message: "CSV uploaded",
 				contentsUploaded: files[0],
@@ -41,6 +44,9 @@ const uploadCSV = async (event) => {
 
 		return {
 			statusCode: 500,
+			headers: {
+				"Content-Type": "application/json",
+			},
 			body: JSON.stringify({
 				message: "Error uploading CSV",
 			}),
