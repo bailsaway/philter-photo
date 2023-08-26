@@ -11,6 +11,11 @@ provider:
   name: aws
   runtime: nodejs18.x
   profile: PhilterPhotoServerless
+  apiGateway:
+    binaryMediaTypes:
+      - "multipart/form-data"
+  httpApi:
+    cors: true
   environment:
     ACADEMY_WHITE_BUCKET: academy-white-caterham-motorsport-photos-bucket
     ACADEMY_GREEN_BUCKET: academy-green-caterham-motorsport-photos-bucket
@@ -90,6 +95,12 @@ functions:
     events:
       - httpApi:
           path: /roadsport
+          method: post
+  awsMultiPartUploader:
+    handler: src/awsMultiPartUploader.handler
+    events:
+      - httpApi:
+          path: /mpu
           method: post
 
 # you can add CloudFormation resource templates here
