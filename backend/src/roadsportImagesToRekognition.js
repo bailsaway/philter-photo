@@ -1,3 +1,6 @@
+//upload single photo to Roadsport S3 Bucket; AWS Rekognition and return labels. Postman filtering confidence 75%
+//No particular reason why it's roadsport bucket. this is just generic, p
+
 "use strict";
 const AWS = require("aws-sdk");
 const parser = require("lambda-multipart-parser");
