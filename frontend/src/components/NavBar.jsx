@@ -12,7 +12,7 @@ function NavBar() {
 			<nav className="navbar navbar-expand-lg bg-body-tertiary">
 				<div className="container-fluid">
 					<NavLink to="/" className="navbar-brand">
-						<img src={logo} alt="PhilterPhotologo" width="15%" height="15%" />
+						<img src={logo} alt="PhilterPhoto logo" width="15%" height="15%" />
 					</NavLink>
 					<ul className="navbar-nav me-auto mb-2 mb-lg-0">
 						<li className="nav-item">

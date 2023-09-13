@@ -6,8 +6,8 @@ function HomeScreen() {
 			<h1>Welcome to PhilterPhoto</h1>
 			<p>
 				This website has been built specifically for{" "}
-				<a href="http://www.snappyracers.com/">SnappyRacer</a> in support of the
-				following workflow:
+				<a href="http://www.snappyracers.com/">SnappyRacers</a> in support of
+				the following workflow:
 			</p>
 			<ul className="list-group list-group-flush">
 				<li className="list-group-item">
@@ -20,26 +20,27 @@ function HomeScreen() {
 					quality etc
 				</li>
 				<li className="list-group-item">
-					A folder of photos grouped by Championship is uploaded to
-					PhilterPhotos <Link to="/philter">here</Link>
+					A folder of photos pertaining to a single Championship is created by
+					SnappyRacers for uploading to PhilterPhotos{" "}
+					<Link to="/philter">here</Link>
 				</li>
 				<li className="list-group-item">
-					The folder is zipped and uploaded to London-based{" "}
-					<a href="https://aws.amazon.com/s3/">AWS S3</a> via multipart upload &
-					presigned URLs
+					On SnappyRacers' upload, the folder is zipped and posted to
+					London-based <a href="https://aws.amazon.com/s3/">AWS S3</a> via
+					multipart upload & presigned URLs
 				</li>
 				<li className="list-group-item">
 					<a href="https://aws.amazon.com/rekognition/">AWS Rekognition</a>{" "}
-					examines each photo against a{" "}
-					<a href="https://aws.amazon.com/dynamodb/">DynamoDB</a> of competitor
-					information
+					examines each photo against an{" "}
+					<a href="https://aws.amazon.com/dynamodb/">AWS DynamoDB</a> of
+					competitor information
 				</li>
 				<li className="list-group-item">
 					The database of competitors can be managed and maintained from{" "}
 					<Link to="/competitors">here</Link>
 				</li>
 				<li className="list-group-item">
-					Each photo is keyword tagged in the metadata with the drivers'
+					Each photo is keyword tagged in its respective metadata with drivers'
 					surnames, separated with commas as necessary
 				</li>
 				<li className="list-group-item">
@@ -48,7 +49,7 @@ function HomeScreen() {
 					been unsuccessfully parsed.
 				</li>
 				<li className="list-group-item">
-					SnappyRacer reimports the downloaded photos into Adobe LightRoom
+					SnappyRacers reimports the downloaded photos into Adobe LightRoom
 				</li>
 			</ul>
 		</>
